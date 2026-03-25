@@ -87,8 +87,10 @@ export function PdfUpload({ onImport }: Props) {
 
         slides.push({
           title: `Page ${pageNum}`,
-          body: pageText ? `<p>${pageText}</p>` : '',
-          image_url: publicUrl,
+          body: '',
+          transcript: pageText || '',
+          background_url: publicUrl,
+          background_opacity: 85,
         })
       }
 

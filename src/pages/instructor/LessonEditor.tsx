@@ -283,6 +283,29 @@ export function LessonEditor() {
                         placeholder="Paste URL or upload"
                       />
                     </div>
+                    {slide.background_url && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Background Overlay Opacity: {slide.background_opacity ?? 85}%
+                        </label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={slide.background_opacity ?? 85}
+                          onChange={(e) => {
+                            const updated = [...slides]
+                            updated[index] = { ...updated[index], background_opacity: parseInt(e.target.value) }
+                            setSlides(updated)
+                          }}
+                          className="w-full accent-brand-600"
+                        />
+                        <div className="flex justify-between text-xs text-gray-400 mt-1">
+                          <span>0% (full image)</span>
+                          <span>100% (hidden)</span>
+                        </div>
+                      </div>
+                    )}
                     <VideoUpload
                       value={slide.video_url || ''}
                       onChange={(url) => updateSlide(index, 'video_url', url)}
@@ -485,7 +508,7 @@ function SlidePreview({ slides }: { slides: Slide[] }) {
         className="p-6 min-h-[300px] bg-cover bg-center bg-no-repeat relative"
         style={slide.background_url ? { backgroundImage: `url(${slide.background_url})` } : undefined}
       >
-        {slide.background_url && <div className="absolute inset-0 bg-white/85" />}
+        {slide.background_url && <div className="absolute inset-0 bg-white" style={{ opacity: (slide.background_opacity ?? 85) / 100 }} />}
         <div className="relative">
           {slide.video_url && (
             <video src={slide.video_url} controls playsInline preload="metadata" className="w-full rounded-lg mb-4 bg-black" />

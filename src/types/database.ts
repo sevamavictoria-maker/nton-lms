@@ -43,6 +43,7 @@ export interface Slide {
   image_url_2?: string
   image_url_3?: string
   background_url?: string
+  background_opacity?: number
   video_url?: string
 }
 

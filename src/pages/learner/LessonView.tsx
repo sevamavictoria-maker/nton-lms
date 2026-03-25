@@ -117,7 +117,7 @@ export function LessonView() {
                 className="p-4 sm:p-8 min-h-[250px] sm:min-h-[350px] bg-cover bg-center bg-no-repeat relative"
                 style={slides[currentSlide].background_url ? { backgroundImage: `url(${slides[currentSlide].background_url})` } : undefined}
               >
-                {slides[currentSlide].background_url && <div className="absolute inset-0 bg-white/85" />}
+                {slides[currentSlide].background_url && <div className="absolute inset-0 bg-white" style={{ opacity: (slides[currentSlide].background_opacity ?? 85) / 100 }} />}
                 <div className="relative">
                   {slides[currentSlide].video_url && (
                     <div className="mb-6">
