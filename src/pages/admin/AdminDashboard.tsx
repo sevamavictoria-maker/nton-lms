@@ -1,36 +1,94 @@
-import { useAllCourses } from '@/hooks/useCourses'
-import { useAllUsers } from '@/hooks/useUsers'
-import { useAllEnrollments, useAllPendingEnrollments, useApproveEnrollment, useRejectEnrollment } from '@/hooks/useEnrollments'
-import { useAllCertificates } from '@/hooks/useCertificates'
+import { useAllPendingEnrollments, useApproveEnrollment, useRejectEnrollment } from '@/hooks/useEnrollments'
+import { useQuery } from '@tanstack/react-query'
+import { supabase } from '@/lib/supabase'
 import { BookOpen, Users, GraduationCap, Award, Hourglass, CheckCircle, XCircle } from 'lucide-react'
 
 export function AdminDashboard() {
-  const { data: courses = [] } = useAllCourses()
-  const { data: users = [] } = useAllUsers()
-  const { data: enrollments = [] } = useAllEnrollments()
-  const { data: certificates = [] } = useAllCertificates()
+  // Lightweight count queries instead of fetching all records
+  const { data: courseCount = 0 } = useQuery({
+    queryKey: ['course-count'],
+    queryFn: async () => {
+      const { count, error } = await supabase.from('courses').select('*', { count: 'exact', head: true })
+      if (error) throw error
+      return count || 0
+    },
+  })
+
+  const { data: userCount = 0 } = useQuery({
+    queryKey: ['user-count'],
+    queryFn: async () => {
+      const { count, error } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
+      if (error) throw error
+      return count || 0
+    },
+  })
+
+  const { data: enrollmentStats = { total: 0, completed: 0 } } = useQuery({
+    queryKey: ['enrollment-stats'],
+    queryFn: async () => {
+      const { count: total, error: e1 } = await supabase.from('enrollments').select('*', { count: 'exact', head: true })
+      if (e1) throw e1
+      const { count: completed, error: e2 } = await supabase.from('enrollments').select('*', { count: 'exact', head: true }).not('completed_at', 'is', null)
+      if (e2) throw e2
+      return { total: total || 0, completed: completed || 0 }
+    },
+  })
+
+  const { data: courseCounts = { draft: 0, published: 0, archived: 0 } } = useQuery({
+    queryKey: ['course-status-counts'],
+    queryFn: async () => {
+      const [d, p, a] = await Promise.all([
+        supabase.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+        supabase.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'published'),
+        supabase.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'archived'),
+      ])
+      return { draft: d.count || 0, published: p.count || 0, archived: a.count || 0 }
+    },
+  })
+
+  const { data: roleCounts = { admin: 0, instructor: 0, learner: 0 } } = useQuery({
+    queryKey: ['user-role-counts'],
+    queryFn: async () => {
+      const [a, i, l] = await Promise.all([
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'admin'),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'instructor'),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'learner'),
+      ])
+      return { admin: a.count || 0, instructor: i.count || 0, learner: l.count || 0 }
+    },
+  })
+
+  // Only fetch the data we actually display as lists
   const { data: pendingEnrollments = [] } = useAllPendingEnrollments()
   const approveEnrollment = useApproveEnrollment()
   const rejectEnrollment = useRejectEnrollment()
 
-  const completedEnrollments = enrollments.filter((e) => e.completed_at)
-  const completionRate = enrollments.length > 0
-    ? Math.round((completedEnrollments.length / enrollments.length) * 100)
+  // Recent enrollments — just 10
+  const { data: recentEnrollments = [] } = useQuery({
+    queryKey: ['recent-enrollments'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('enrollments')
+        .select('id, enrolled_at, status, user:profiles(id, full_name, email), course:courses(id, title)')
+        .eq('status', 'approved')
+        .order('enrolled_at', { ascending: false })
+        .limit(10)
+      if (error) throw error
+      return data
+    },
+  })
+
+  const completionRate = enrollmentStats.total > 0
+    ? Math.round((enrollmentStats.completed / enrollmentStats.total) * 100)
     : 0
 
-  // Suppress unused variable warnings
-  void certificates
-
   const stats = [
-    { label: 'Total Courses', value: courses.length, icon: <BookOpen size={24} />, color: 'bg-brand-100 text-brand-700' },
-    { label: 'Total Users', value: users.length, icon: <Users size={24} />, color: 'bg-blue-100 text-blue-700' },
-    { label: 'Total Enrollments', value: enrollments.length, icon: <GraduationCap size={24} />, color: 'bg-amber-100 text-amber-700' },
+    { label: 'Total Courses', value: courseCount, icon: <BookOpen size={24} />, color: 'bg-brand-100 text-brand-700' },
+    { label: 'Total Users', value: userCount, icon: <Users size={24} />, color: 'bg-blue-100 text-blue-700' },
+    { label: 'Total Enrollments', value: enrollmentStats.total, icon: <GraduationCap size={24} />, color: 'bg-amber-100 text-amber-700' },
     { label: 'Completion Rate', value: `${completionRate}%`, icon: <Award size={24} />, color: 'bg-purple-100 text-purple-700' },
     { label: 'Pending Requests', value: pendingEnrollments.length, icon: <Hourglass size={24} />, color: 'bg-orange-100 text-orange-700' },
   ]
-
-  // Recent enrollments (approved)
-  const recentEnrollments = enrollments.filter((e) => e.status === 'approved').slice(0, 10)
 
   return (
     <div>
@@ -101,7 +159,7 @@ export function AdminDashboard() {
             <p className="text-gray-500 text-sm">No enrollments yet.</p>
           ) : (
             <div className="space-y-3">
-              {recentEnrollments.map((e) => (
+              {recentEnrollments.map((e: any) => (
                 <div key={e.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{e.user?.full_name || e.user?.email || 'Unknown'}</p>
@@ -121,7 +179,6 @@ export function AdminDashboard() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Course Status</h2>
           <div className="space-y-3">
             {(['draft', 'published', 'archived'] as const).map((status) => {
-              const count = courses.filter((c) => c.status === status).length
               const colors: Record<string, string> = {
                 draft: 'bg-yellow-100 text-yellow-700',
                 published: 'bg-green-100 text-green-700',
@@ -134,7 +191,7 @@ export function AdminDashboard() {
                       {status}
                     </span>
                   </div>
-                  <span className="text-lg font-semibold text-gray-900">{count}</span>
+                  <span className="text-lg font-semibold text-gray-900">{courseCounts[status]}</span>
                 </div>
               )
             })}
@@ -143,15 +200,12 @@ export function AdminDashboard() {
           <div className="mt-6 pt-4 border-t border-gray-100">
             <h3 className="text-sm font-medium text-gray-600 mb-3">Users by Role</h3>
             <div className="space-y-2">
-              {(['admin', 'instructor', 'learner'] as const).map((role) => {
-                const count = users.filter((u) => u.role === role).length
-                return (
-                  <div key={role} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 capitalize">{role}s</span>
-                    <span className="text-sm font-medium text-gray-900">{count}</span>
-                  </div>
-                )
-              })}
+              {(['admin', 'instructor', 'learner'] as const).map((role) => (
+                <div key={role} className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 capitalize">{role}s</span>
+                  <span className="text-sm font-medium text-gray-900">{roleCounts[role]}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>

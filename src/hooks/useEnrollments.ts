@@ -9,7 +9,7 @@ export function useMyEnrollments(userId?: string) {
       if (!userId) return []
       const { data, error } = await supabase
         .from('enrollments')
-        .select('*, course:courses(*, instructor:profiles!courses_created_by_fkey(id, full_name))')
+        .select('*, course:courses(id, title, description, cover_url, category, status, created_by, instructor:profiles!courses_created_by_fkey(id, full_name))')
         .eq('user_id', userId)
         .order('enrolled_at', { ascending: false })
       if (error) throw error
@@ -26,7 +26,7 @@ export function useCourseEnrollments(courseId?: string) {
       if (!courseId) return []
       const { data, error } = await supabase
         .from('enrollments')
-        .select('*, user:profiles(*)')
+        .select('*, user:profiles(id, full_name, email)')
         .eq('course_id', courseId)
         .order('enrolled_at', { ascending: false })
       if (error) throw error
@@ -44,6 +44,7 @@ export function useAllEnrollments() {
         .from('enrollments')
         .select('*, user:profiles(id, full_name, email), course:courses(id, title)')
         .order('enrolled_at', { ascending: false })
+        .limit(200)
       if (error) throw error
       return data as Enrollment[]
     },

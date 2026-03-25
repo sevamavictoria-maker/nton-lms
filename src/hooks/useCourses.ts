@@ -8,7 +8,7 @@ export function useAllCourses() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('courses')
-        .select('*, instructor:profiles!courses_created_by_fkey(*)')
+        .select('*, instructor:profiles!courses_created_by_fkey(id, full_name)')
         .order('created_at', { ascending: false })
       if (error) throw error
       return data as Course[]
@@ -71,7 +71,7 @@ export function useCourse(courseId?: string) {
       if (!courseId) return null
       const { data, error } = await supabase
         .from('courses')
-        .select('*, instructor:profiles!courses_created_by_fkey(*)')
+        .select('*, instructor:profiles!courses_created_by_fkey(id, full_name, email)')
         .eq('id', courseId)
         .single()
       if (error) throw error
