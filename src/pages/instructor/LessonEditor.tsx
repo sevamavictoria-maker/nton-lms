@@ -505,7 +505,7 @@ function SlidePreview({ slides }: { slides: Slide[] }) {
         <p className="text-brand-200 text-sm">Slide {current + 1} of {slides.length}</p>
       </div>
       <div
-        className="p-6 min-h-[300px] bg-cover bg-center bg-no-repeat relative"
+        className="p-6 min-h-[400px] sm:min-h-[600px] bg-contain bg-center bg-no-repeat relative"
         style={slide.background_url ? { backgroundImage: `url(${slide.background_url})` } : undefined}
       >
         {slide.background_url && <div className="absolute inset-0 bg-white" style={{ opacity: (slide.background_opacity ?? 85) / 100 }} />}
