@@ -3,9 +3,10 @@ import { useMyEnrollments, useEnroll } from '@/hooks/useEnrollments'
 import { usePublishedCourses } from '@/hooks/useCourses'
 import { useAllMyProgress } from '@/hooks/useProgress'
 import { Link } from 'react-router-dom'
-import { BookOpen, CheckCircle, Clock, Plus, AlertCircle, Hourglass } from 'lucide-react'
+import { BookOpen, CheckCircle, Clock, Plus, AlertCircle, Hourglass, Video, Calendar, Clock as ClockIcon, Link as LinkIcon } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import type { LiveLesson } from '@/types/database'
 
 export function LearnerDashboard() {
   const { profile } = useAuth()
@@ -52,6 +53,25 @@ export function LearnerDashboard() {
     if (!profile) return
     await enroll.mutateAsync({ userId: profile.id, courseId })
   }
+
+  // Fetch upcoming live sessions for enrolled courses
+  const approvedCourseIds = approvedEnrollments.map((e) => e.course_id)
+  const { data: upcomingLiveLessons = [] } = useQuery({
+    queryKey: ['upcoming-live-lessons', approvedCourseIds],
+    queryFn: async () => {
+      if (approvedCourseIds.length === 0) return []
+      const { data, error } = await supabase
+        .from('live_lessons')
+        .select('*, course:courses(title)')
+        .in('course_id', approvedCourseIds)
+        .gte('scheduled_at', new Date().toISOString())
+        .order('scheduled_at', { ascending: true })
+        .limit(10)
+      if (error) throw error
+      return data as (LiveLesson & { course: { title: string } | null })[]
+    },
+    enabled: approvedCourseIds.length > 0,
+  })
 
   const completedCount = approvedEnrollments.filter((e) => e.completed_at).length
   const inProgressCount = approvedEnrollments.length - completedCount
@@ -107,6 +127,53 @@ export function LearnerDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Upcoming Live Sessions */}
+      {upcomingLiveLessons.length > 0 && (
+        <>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Video size={20} className="text-brand-600" />
+            Upcoming Classes
+          </h2>
+          <div className="space-y-2 mb-8">
+            {upcomingLiveLessons.map((ll) => {
+              const dt = new Date(ll.scheduled_at)
+              return (
+                <div key={ll.id} className="bg-white rounded-xl border border-brand-200 p-4 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-100 text-brand-600">
+                    <Video size={20} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900">{ll.title}</p>
+                    <p className="text-xs text-gray-500">{ll.course?.title}</p>
+                    <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                      <span className="flex items-center gap-1">
+                        <Calendar size={12} />
+                        {dt.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <ClockIcon size={12} />
+                        {dt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} ({ll.duration_minutes}min)
+                      </span>
+                    </div>
+                  </div>
+                  {ll.meeting_url && (
+                    <a
+                      href={ll.meeting_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-lg bg-brand-600 text-white hover:bg-brand-700 shrink-0"
+                    >
+                      <LinkIcon size={14} />
+                      Join
+                    </a>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
 
       {/* Pending Enrollment Requests */}
       {pendingEnrollments.length > 0 && (

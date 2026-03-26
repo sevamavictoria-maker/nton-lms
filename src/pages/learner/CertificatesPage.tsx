@@ -9,81 +9,82 @@ function generateCertificatePDF(cert: Certificate) {
   const w = doc.internal.pageSize.getWidth()
   const h = doc.internal.pageSize.getHeight()
 
-  // Background
-  doc.setFillColor(249, 250, 251)
+  // Background — brand-50
+  doc.setFillColor(240, 244, 248)
   doc.rect(0, 0, w, h, 'F')
 
-  // Border design - outer border
-  doc.setDrawColor(16, 185, 129)
+  // Outer border — brand-900
+  doc.setDrawColor(16, 42, 67)
   doc.setLineWidth(3)
   doc.rect(10, 10, w - 20, h - 20)
 
-  // Inner border
+  // Inner border — brand-600
   doc.setLineWidth(0.5)
-  doc.setDrawColor(5, 150, 105)
+  doc.setDrawColor(72, 101, 129)
   doc.rect(15, 15, w - 30, h - 30)
 
-  // Corner decorations
-  const corners = [
+  // Corner decorations — brand-700
+  const corners: [number, number][] = [
     [18, 18], [w - 28, 18], [18, h - 28], [w - 28, h - 28]
   ]
-  doc.setFillColor(16, 185, 129)
+  doc.setFillColor(51, 78, 104)
   for (const [cx, cy] of corners) {
     doc.circle(cx, cy, 2, 'F')
     doc.circle(cx + 10, cy, 1.5, 'F')
     doc.circle(cx, cy + 10, 1.5, 'F')
   }
 
-  // Top decorative line
-  doc.setDrawColor(16, 185, 129)
+  // Top decorative line — brand-600
+  doc.setDrawColor(72, 101, 129)
   doc.setLineWidth(1)
   doc.line(w / 2 - 50, 35, w / 2 + 50, 35)
 
-  // Title
+  // Title — brand-300
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(14)
-  doc.setTextColor(107, 114, 128)
+  doc.setTextColor(159, 179, 200)
   doc.text('CERTIFICATE OF COMPLETION', w / 2, 48, { align: 'center' })
 
-  // Decorative line below title
+  // Decorative line below title — brand-200
+  doc.setDrawColor(188, 204, 220)
   doc.setLineWidth(0.5)
   doc.line(w / 2 - 40, 52, w / 2 + 40, 52)
 
-  // "This is to certify that"
+  // "This is to certify that" — brand-600
   doc.setFontSize(11)
-  doc.setTextColor(107, 114, 128)
+  doc.setTextColor(72, 101, 129)
   doc.text('This is to certify that', w / 2, 68, { align: 'center' })
 
-  // Learner name
+  // Learner name — brand-900
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(28)
-  doc.setTextColor(17, 24, 39)
+  doc.setTextColor(16, 42, 67)
   const learnerName = cert.user?.full_name || cert.user?.email || 'Learner'
   doc.text(learnerName, w / 2, 84, { align: 'center' })
 
-  // Underline the name
+  // Underline the name — brand-600
   const nameWidth = doc.getTextWidth(learnerName)
-  doc.setDrawColor(16, 185, 129)
+  doc.setDrawColor(72, 101, 129)
   doc.setLineWidth(0.8)
   doc.line(w / 2 - nameWidth / 2, 87, w / 2 + nameWidth / 2, 87)
 
-  // "has successfully completed"
+  // "has successfully completed" — brand-600
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(11)
-  doc.setTextColor(107, 114, 128)
+  doc.setTextColor(72, 101, 129)
   doc.text('has successfully completed the course', w / 2, 100, { align: 'center' })
 
-  // Course name
+  // Course name — brand-700
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(22)
-  doc.setTextColor(5, 150, 105)
+  doc.setTextColor(51, 78, 104)
   const courseName = cert.course?.title || 'Course'
   doc.text(courseName, w / 2, 116, { align: 'center' })
 
-  // Date
+  // Date — brand-300
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(11)
-  doc.setTextColor(107, 114, 128)
+  doc.setTextColor(159, 179, 200)
   const dateStr = new Date(cert.issued_at).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -91,24 +92,24 @@ function generateCertificatePDF(cert: Certificate) {
   })
   doc.text(`Issued on ${dateStr}`, w / 2, 132, { align: 'center' })
 
-  // Bottom decorative line
-  doc.setDrawColor(16, 185, 129)
+  // Bottom decorative line — brand-600
+  doc.setDrawColor(72, 101, 129)
   doc.setLineWidth(1)
   doc.line(w / 2 - 50, 145, w / 2 + 50, 145)
 
-  // Brand name at bottom
+  // Brand name at bottom — brand-900
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(16)
-  doc.setTextColor(16, 185, 129)
+  doc.setTextColor(16, 42, 67)
   doc.text('NtoN', w / 2 - 5, 158, { align: 'center' })
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(9)
-  doc.setTextColor(156, 163, 175)
+  doc.setTextColor(159, 179, 200)
   doc.text('Learning Management System', w / 2, 164, { align: 'center' })
 
-  // Certificate ID
+  // Certificate ID — brand-200
   doc.setFontSize(7)
-  doc.setTextColor(209, 213, 219)
+  doc.setTextColor(188, 204, 220)
   doc.text(`Certificate ID: ${cert.id}`, w / 2, h - 18, { align: 'center' })
 
   doc.save(`NtoN-Certificate-${courseName.replace(/[^a-zA-Z0-9]/g, '-')}.pdf`)
