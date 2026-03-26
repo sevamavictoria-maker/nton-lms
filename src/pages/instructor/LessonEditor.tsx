@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useLesson, useUpdateLesson } from '@/hooks/useLessons'
 import { useQuestions, useCreateQuestion, useUpdateQuestion, useDeleteQuestion } from '@/hooks/useQuiz'
 import { useAuth } from '@/hooks/useAuth'
-import { ArrowLeft, Save, Plus, Trash2, Eye, Edit3, X, Pencil, Check, Download } from 'lucide-react'
+import { ArrowLeft, Save, Plus, Trash2, Eye, Edit3, X, Pencil, Check, Download, Maximize } from 'lucide-react'
 import { RichTextEditor } from '@/components/RichTextEditor'
 import { ImageUpload } from '@/components/ImageUpload'
 import { VideoUpload } from '@/components/VideoUpload'
@@ -258,24 +258,69 @@ export function LessonEditor() {
                       />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <ImageUpload
-                        value={slide.image_url || ''}
-                        onChange={(url) => updateSlide(index, 'image_url', url)}
-                        label="Image 1 (optional)"
-                        placeholder="Paste URL or upload"
-                      />
-                      <ImageUpload
-                        value={slide.image_url_2 || ''}
-                        onChange={(url) => updateSlide(index, 'image_url_2', url)}
-                        label="Image 2 (optional)"
-                        placeholder="Paste URL or upload"
-                      />
-                      <ImageUpload
-                        value={slide.image_url_3 || ''}
-                        onChange={(url) => updateSlide(index, 'image_url_3', url)}
-                        label="Image 3 (optional)"
-                        placeholder="Paste URL or upload"
-                      />
+                      <div>
+                        <ImageUpload
+                          value={slide.image_url || ''}
+                          onChange={(url) => updateSlide(index, 'image_url', url)}
+                          label="Image 1 (optional)"
+                          placeholder="Paste URL or upload"
+                        />
+                        {slide.image_url && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = [...slides]
+                              updated[index] = { ...updated[index], background_url: slide.image_url, background_opacity: 0, image_url: '' }
+                              setSlides(updated)
+                            }}
+                            className="flex items-center gap-1 mt-1 text-xs text-brand-600 hover:text-brand-800 font-medium"
+                          >
+                            <Maximize size={12} /> Use as full-slide background
+                          </button>
+                        )}
+                      </div>
+                      <div>
+                        <ImageUpload
+                          value={slide.image_url_2 || ''}
+                          onChange={(url) => updateSlide(index, 'image_url_2', url)}
+                          label="Image 2 (optional)"
+                          placeholder="Paste URL or upload"
+                        />
+                        {slide.image_url_2 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = [...slides]
+                              updated[index] = { ...updated[index], background_url: slide.image_url_2, background_opacity: 0, image_url_2: '' }
+                              setSlides(updated)
+                            }}
+                            className="flex items-center gap-1 mt-1 text-xs text-brand-600 hover:text-brand-800 font-medium"
+                          >
+                            <Maximize size={12} /> Use as full-slide background
+                          </button>
+                        )}
+                      </div>
+                      <div>
+                        <ImageUpload
+                          value={slide.image_url_3 || ''}
+                          onChange={(url) => updateSlide(index, 'image_url_3', url)}
+                          label="Image 3 (optional)"
+                          placeholder="Paste URL or upload"
+                        />
+                        {slide.image_url_3 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = [...slides]
+                              updated[index] = { ...updated[index], background_url: slide.image_url_3, background_opacity: 0, image_url_3: '' }
+                              setSlides(updated)
+                            }}
+                            className="flex items-center gap-1 mt-1 text-xs text-brand-600 hover:text-brand-800 font-medium"
+                          >
+                            <Maximize size={12} /> Use as full-slide background
+                          </button>
+                        )}
+                      </div>
                       <ImageUpload
                         value={slide.background_url || ''}
                         onChange={(url) => updateSlide(index, 'background_url', url)}
