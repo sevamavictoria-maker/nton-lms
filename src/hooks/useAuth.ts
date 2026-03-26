@@ -30,7 +30,13 @@ export function useAuth() {
   }, [])
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    // Race getSession against a timeout so the app never hangs
+    const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000))
+
+    Promise.race([
+      supabase.auth.getSession().then(({ data: { session } }) => session),
+      timeout,
+    ]).then(async (session) => {
       if (session?.user) {
         const profile = await fetchProfile(session.user.id)
         setState({
