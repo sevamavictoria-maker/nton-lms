@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useLesson } from '@/hooks/useLessons'
 import { useQuestions, useSubmitQuiz } from '@/hooks/useQuiz'
 import { useMarkComplete } from '@/hooks/useProgress'
-import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle, XCircle, FileText, ChevronDown } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle, XCircle, FileText, ChevronDown, Download } from 'lucide-react'
 import { TextToSpeech } from '@/components/TextToSpeech'
 import type { Slide, QuizQuestion } from '@/types/database'
 
@@ -138,13 +138,31 @@ export function LessonView() {
                         : 'flex justify-center'
                     }`}>
                       {slides[currentSlide].image_url && (
-                        <img src={slides[currentSlide].image_url} alt="" className="max-h-56 rounded-lg object-contain mx-auto block" />
+                        <div className="relative group">
+                          <img src={slides[currentSlide].image_url} alt="" className="max-h-56 rounded-lg object-contain mx-auto block" />
+                          <a href={slides[currentSlide].image_url} download target="_blank" rel="noopener noreferrer"
+                            className="absolute top-2 right-2 p-1.5 bg-brand-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" title="Download image">
+                            <Download size={14} />
+                          </a>
+                        </div>
                       )}
                       {slides[currentSlide].image_url_2 && (
-                        <img src={slides[currentSlide].image_url_2} alt="" className="max-h-56 rounded-lg object-contain mx-auto block" />
+                        <div className="relative group">
+                          <img src={slides[currentSlide].image_url_2} alt="" className="max-h-56 rounded-lg object-contain mx-auto block" />
+                          <a href={slides[currentSlide].image_url_2} download target="_blank" rel="noopener noreferrer"
+                            className="absolute top-2 right-2 p-1.5 bg-brand-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" title="Download image">
+                            <Download size={14} />
+                          </a>
+                        </div>
                       )}
                       {slides[currentSlide].image_url_3 && (
-                        <img src={slides[currentSlide].image_url_3} alt="" className="max-h-56 rounded-lg object-contain mx-auto block" />
+                        <div className="relative group">
+                          <img src={slides[currentSlide].image_url_3} alt="" className="max-h-56 rounded-lg object-contain mx-auto block" />
+                          <a href={slides[currentSlide].image_url_3} download target="_blank" rel="noopener noreferrer"
+                            className="absolute top-2 right-2 p-1.5 bg-brand-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" title="Download image">
+                            <Download size={14} />
+                          </a>
+                        </div>
                       )}
                     </div>
                   )}
