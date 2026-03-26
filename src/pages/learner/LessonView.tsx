@@ -169,26 +169,6 @@ export function LessonView() {
                   <div className="prose prose-sm max-w-none text-brand-800 leading-relaxed text-base"
                     dangerouslySetInnerHTML={{ __html: slides[currentSlide].body }} />
 
-                  {/* Transcript Accordion */}
-                  {slides[currentSlide].transcript && (
-                    <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
-                      <button
-                        onClick={() => setShowTranscript(!showTranscript)}
-                        className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
-                      >
-                        <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                          <FileText size={14} />
-                          Transcript
-                        </span>
-                        <ChevronDown size={16} className={`text-gray-400 transition-transform duration-200 ${showTranscript ? 'rotate-180' : ''}`} />
-                      </button>
-                      {showTranscript && (
-                        <div className="px-4 py-3 bg-white border-t border-gray-200">
-                          <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{slides[currentSlide].transcript}</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -236,6 +216,27 @@ export function LessonView() {
               </button>
             )}
           </div>
+
+          {/* Transcript Accordion — pinned to bottom */}
+          {slides[currentSlide].transcript && (
+            <div className="border-t border-gray-200">
+              <button
+                onClick={() => setShowTranscript(!showTranscript)}
+                className="w-full flex items-center justify-between px-4 sm:px-8 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+              >
+                <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <FileText size={14} />
+                  Transcript
+                </span>
+                <ChevronDown size={16} className={`text-gray-400 transition-transform duration-200 ${showTranscript ? 'rotate-180' : ''}`} />
+              </button>
+              {showTranscript && (
+                <div className="px-4 sm:px-8 py-3 bg-white border-t border-gray-200">
+                  <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{slides[currentSlide].transcript}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
