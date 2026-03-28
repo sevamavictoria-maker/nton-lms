@@ -5,8 +5,8 @@ const ELEVENLABS_API_KEY = 'sk_7f916cc2780a02e0f667c1c0cefe74a209280d2465f4a4f5'
 const ELEVENLABS_API_URL = 'https://api.elevenlabs.io/v1/text-to-speech'
 
 const ELEVENLABS_VOICES = [
-  { id: 'cvpTJfe9LINpHIOmB2Hp', name: 'Female (AU)' },
-  { id: 'on7De0nZUAc9uGezUxS', name: 'Male (AU)' },
+  { id: 'fCqNx624ZlenYx5PXk6M', name: 'Female (AU)' },
+  { id: 'snyKKuaGYk1VUEh42zbW', name: 'Male (AU)' },
   { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel' },
   { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella' },
   { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni' },
