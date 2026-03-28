@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { useLesson } from '@/hooks/useLessons'
 import { useQuestions, useSubmitQuiz } from '@/hooks/useQuiz'
 import { useMarkComplete } from '@/hooks/useProgress'
-import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle, XCircle, FileText, ChevronDown, Download } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle, XCircle, FileText, ChevronDown, Download, RotateCcw } from 'lucide-react'
 import { TextToSpeech } from '@/components/TextToSpeech'
 import type { Slide, QuizQuestion } from '@/types/database'
 
@@ -35,8 +35,11 @@ export function LessonView() {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [quizSubmitted, setQuizSubmitted] = useState(false)
-  const [quizResult, setQuizResult] = useState<{ score: number; correct: number; total: number } | null>(null)
+  const [quizResult, setQuizResult] = useState<{ score: number; correct: number; total: number; attemptCount: number } | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
+
+  // Time tracking — start timer when page mounts
+  const startTimeRef = useRef(Date.now())
 
   const slides: Slide[] = lesson?.type === 'slide' && lesson.content_json?.slides ? lesson.content_json.slides : []
 
@@ -49,22 +52,34 @@ export function LessonView() {
 
   const handleMarkSlideComplete = async () => {
     if (!profile || !lessonId || !courseId) return
-    await markComplete.mutateAsync({ userId: profile.id, lessonId, courseId })
+    const timeSpentMinutes = Math.round((Date.now() - startTimeRef.current) / 60000)
+    await markComplete.mutateAsync({ userId: profile.id, lessonId, courseId, timeSpentMinutes })
     navigate(`/learner/courses/${courseId}`)
   }
 
   const handleSubmitQuiz = async () => {
     if (!profile || !lessonId || !courseId) return
+    const timeSpentMinutes = Math.round((Date.now() - startTimeRef.current) / 60000)
     const result = await submitQuiz.mutateAsync({
       userId: profile.id,
       lessonId,
       courseId,
       answers,
       questions,
+      timeSpentMinutes,
     })
     setQuizResult(result)
     setQuizSubmitted(true)
     setShowFeedback(true)
+  }
+
+  const handleRetakeQuiz = () => {
+    setQuizSubmitted(false)
+    setQuizResult(null)
+    setShowFeedback(false)
+    setCurrentQuestion(0)
+    setAnswers({})
+    startTimeRef.current = Date.now()
   }
 
   if (isLoading) {
@@ -312,6 +327,9 @@ export function LessonView() {
             <p className="text-gray-600">
               You got {quizResult.correct} out of {quizResult.total} questions correct.
             </p>
+            <p className="text-xs text-gray-400 mt-1">
+              Attempt #{quizResult.attemptCount}
+            </p>
           </div>
 
           {/* Show feedback for each question */}
@@ -348,7 +366,14 @@ export function LessonView() {
             </div>
           )}
 
-          <div className="px-8 py-4 border-t border-gray-200 flex justify-center">
+          <div className="px-8 py-4 border-t border-gray-200 flex items-center justify-center gap-3">
+            <button
+              onClick={handleRetakeQuiz}
+              className="flex items-center gap-1.5 border border-brand-300 text-brand-600 px-5 py-2 rounded-lg hover:bg-brand-50 text-sm font-medium"
+            >
+              <RotateCcw size={14} />
+              Retake Quiz
+            </button>
             <Link
               to={`/learner/courses/${courseId}`}
               className="bg-brand-600 text-white px-6 py-2 rounded-lg hover:bg-brand-700 text-sm font-medium"

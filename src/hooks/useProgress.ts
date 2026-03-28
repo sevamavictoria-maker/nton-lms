@@ -54,7 +54,18 @@ export function useCourseProgress(courseId?: string) {
 export function useMarkComplete() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async ({ userId, lessonId, courseId, score }: { userId: string; lessonId: string; courseId: string; score?: number }) => {
+    mutationFn: async ({ userId, lessonId, courseId, score, timeSpentMinutes }: { userId: string; lessonId: string; courseId: string; score?: number; timeSpentMinutes?: number }) => {
+      // Fetch existing progress to increment attempt count and accumulate time
+      const { data: existing } = await supabase
+        .from('progress')
+        .select('attempt_count, time_spent_minutes')
+        .eq('user_id', userId)
+        .eq('lesson_id', lessonId)
+        .maybeSingle()
+
+      const prevAttempts = existing?.attempt_count ?? 0
+      const prevTime = existing?.time_spent_minutes ?? 0
+
       const { data, error } = await supabase
         .from('progress')
         .upsert(
@@ -64,6 +75,8 @@ export function useMarkComplete() {
             course_id: courseId,
             completed_at: new Date().toISOString(),
             score: score ?? null,
+            time_spent_minutes: prevTime + (timeSpentMinutes ?? 0),
+            attempt_count: prevAttempts + 1,
           },
           { onConflict: 'user_id,lesson_id' }
         )

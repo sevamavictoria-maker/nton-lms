@@ -96,6 +96,8 @@ export interface Progress {
   course_id: string
   completed_at: string
   score: number | null
+  time_spent_minutes: number
+  attempt_count: number
 }
 
 export interface LiveLesson {

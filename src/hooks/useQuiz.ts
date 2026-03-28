@@ -96,12 +96,14 @@ export function useSubmitQuiz() {
       courseId,
       answers,
       questions,
+      timeSpentMinutes,
     }: {
       userId: string
       lessonId: string
       courseId: string
       answers: Record<string, string>
       questions: QuizQuestion[]
+      timeSpentMinutes?: number
     }) => {
       let correct = 0
       for (const q of questions) {
@@ -110,6 +112,17 @@ export function useSubmitQuiz() {
         if (userAnswer === correctAnswer) correct++
       }
       const score = questions.length > 0 ? Math.round((correct / questions.length) * 100) : 0
+
+      // Fetch existing to increment attempts and accumulate time
+      const { data: existing } = await supabase
+        .from('progress')
+        .select('attempt_count, time_spent_minutes')
+        .eq('user_id', userId)
+        .eq('lesson_id', lessonId)
+        .maybeSingle()
+
+      const prevAttempts = existing?.attempt_count ?? 0
+      const prevTime = existing?.time_spent_minutes ?? 0
 
       // Upsert progress
       const { error } = await supabase
@@ -121,12 +134,14 @@ export function useSubmitQuiz() {
             course_id: courseId,
             completed_at: new Date().toISOString(),
             score,
+            time_spent_minutes: prevTime + (timeSpentMinutes ?? 0),
+            attempt_count: prevAttempts + 1,
           },
           { onConflict: 'user_id,lesson_id' }
         )
       if (error) throw error
 
-      return { score, correct, total: questions.length }
+      return { score, correct, total: questions.length, attemptCount: prevAttempts + 1 }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['progress'] })
