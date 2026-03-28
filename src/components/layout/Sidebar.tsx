@@ -46,6 +46,7 @@ const instructorNav: NavItem[] = [
 const learnerNav: NavItem[] = [
   { to: '/learner', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
   { to: '/learner/courses', label: 'My Courses', icon: <GraduationCap size={20} /> },
+  { to: '/learner/grades', label: 'My Grades', icon: <BarChart3 size={20} /> },
   { to: '/learner/certificates', label: 'Certificates', icon: <Award size={20} /> },
 ]
 
