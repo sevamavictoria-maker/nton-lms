@@ -1,73 +1,131 @@
-# React + TypeScript + Vite
+# NtoN LMS - Learning Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-featured Learning Management System built with React, TypeScript, Vite, Supabase, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Frontend**: React 19 + TypeScript + Vite
+- **Styling**: Tailwind CSS 4
+- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **State**: TanStack React Query
+- **Charts**: Recharts
+- **PDF**: jsPDF + pdfjs-dist
+- **Rich Text**: TipTap
+- **AI Voice**: ElevenLabs API + Web Speech API
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Authentication & Roles
+- Email/password login with session persistence
+- Password recovery via email
+- Three roles: **Admin**, **Instructor**, **Learner**
+- Role-based dashboards, navigation, and route protection
 
-## Expanding the ESLint configuration
+### Course Management (Admin & Instructor)
+- Create, edit, publish, and archive courses
+- Course cover images, categories, and descriptions
+- Organize courses into **collections/categories**
+- Course file attachments (PDFs, documents, resources)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Lesson Builder
+- **Slide-based lessons**: Rich text editor (TipTap), up to 3 images per slide, background images with opacity control, embedded videos (MP4/WebM), slide transcripts
+- **Quiz lessons**: Multiple choice, true/false, and short answer question types
+- AI text-to-speech for slide content
+- Drag-to-reorder lessons within a course
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Quiz System
+- Auto-grading with instant score calculation
+- Per-question feedback (correct/incorrect with correct answer shown)
+- **Quiz retakes** with unlimited attempts
+- **Attempt tracking** - shows attempt number on results
+- Score color-coding (green >= 70%, amber < 70%)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Enrollment & Access Control
+- **Self-enrollment** with pending approval workflow
+- **Admin/instructor assignment** with direct approval
+- Enrollment approval/rejection by instructor or admin
+- Mandatory course flagging with deadlines
+- Enrollment status tracking (pending, approved, rejected)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Progress & Time Tracking
+- Per-lesson completion tracking with timestamps
+- **Time spent tracking** in minutes per lesson (accumulated across sessions)
+- **Attempt count** per lesson/quiz
+- Course-level progress percentage with visual progress bars
+- Auto-completion detection for slide lessons (last slide reached)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Grades & Reporting
+- **Grades page** (Admin): View all learner scores, time spent, and attempts
+  - Filter by course
+  - Learner overview table with avg score, lessons completed, time, attempts
+  - Per-lesson breakdown with individual submissions
+  - Stats cards: total learners, avg score, total time, total attempts
+- **Reports page** (Admin):
+  - Enrollments over time (line chart)
+  - Course completion rates (bar chart)
+  - Department breakdown (bar chart)
+  - **Top Learners** table with rank, department, avg score, lessons, time
+  - **Top Learners by Department** with per-department rankings
+  - User distribution (pie chart)
+  - Filterable by department and role
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Certificates
+- Auto-issue when all course lessons are completed
+- Downloadable PDF certificates with brand-themed design (dark blue/gray palette)
+- Certificate details: learner name, course title, issue date, certificate ID
+- Admin certificate management view
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Live Sessions
+- Schedule live lessons with date, time, and duration
+- Meeting URL integration (Zoom, Teams, etc.)
+- Upcoming sessions visible on learner dashboard across all enrolled courses
+- Past sessions grayed out automatically
+
+### User Management (Admin)
+- Create and manage user accounts
+- Assign roles (admin, instructor, learner)
+- User profiles with: full name, avatar, department, job role
+- Team coordinator assignment
+- Active/inactive status
+
+### Learner Experience
+- Personal dashboard with enrollment stats, progress, and upcoming classes
+- Course browsing with enrollment requests
+- Slide viewer with transitions, text-to-speech, and transcript accordion
+- Image downloads from slides
+- Quiz taking with real-time feedback
+- Certificate viewing and PDF download
+
+### Additional Features
+- **FAQ page** for learners
+- **Course Q&A** chat per course
+- Responsive design (mobile-friendly)
+- Lazy-loaded pages for fast initial load
+- Row-Level Security on all database tables
+
+## Database Schema
+
+| Table | Description |
+|-------|-------------|
+| profiles | User accounts with roles and departments |
+| courses | Course content with status and categories |
+| lessons | Slide and quiz lessons within courses |
+| quiz_questions | Questions with types, options, and answers |
+| enrollments | Student enrollment with approval workflow |
+| progress | Completion tracking with scores, time, attempts |
+| certificates | Issued certificates per user per course |
+| live_lessons | Scheduled live sessions with meeting URLs |
+| course_files | Uploaded course resources |
+| settings | Application configuration |
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up Supabase project and run migrations in `supabase/`
+4. Create `.env` with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+5. Start dev server: `npm run dev`
+
+## Deployment
+
+Deployed on Vercel with automatic builds from GitHub.
