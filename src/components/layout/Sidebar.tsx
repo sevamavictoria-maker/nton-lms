@@ -32,6 +32,7 @@ const adminNav: NavItem[] = [
   { to: '/admin/collections', label: 'Collections', icon: <FolderOpen size={20} /> },
   { to: '/admin/courses', label: 'Courses', icon: <BookOpen size={20} /> },
   { to: '/admin/users', label: 'Users', icon: <Users size={20} /> },
+  { to: '/admin/grades', label: 'Grades', icon: <GraduationCap size={20} /> },
   { to: '/admin/certificates', label: 'Certificates', icon: <Award size={20} /> },
   { to: '/admin/reports', label: 'Reports', icon: <BarChart3 size={20} /> },
 ]

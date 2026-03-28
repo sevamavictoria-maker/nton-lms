@@ -18,6 +18,7 @@ const ManageCourses = lazy(() => import('@/pages/admin/ManageCourses').then(m =>
 const ManageUsers = lazy(() => import('@/pages/admin/ManageUsers').then(m => ({ default: m.ManageUsers })))
 const AdminCertificates = lazy(() => import('@/pages/admin/CertificatesPage').then(m => ({ default: m.CertificatesPage })))
 const ReportsPage = lazy(() => import('@/pages/admin/ReportsPage').then(m => ({ default: m.ReportsPage })))
+const GradesPage = lazy(() => import('@/pages/admin/GradesPage').then(m => ({ default: m.GradesPage })))
 const CollectionsPage = lazy(() => import('@/pages/admin/CollectionsPage').then(m => ({ default: m.CollectionsPage })))
 
 // Instructor pages
@@ -76,6 +77,7 @@ function AppRoutes() {
           <Route path="/admin/courses/:courseId/lessons/:lessonId" element={<LessonEditor />} />
           <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/certificates" element={<AdminCertificates />} />
+          <Route path="/admin/grades" element={<GradesPage />} />
           <Route path="/admin/reports" element={<ReportsPage />} />
         </Route>
 
