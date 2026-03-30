@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
 import { useActiveCategories } from '@/hooks/useCategories'
 import { usePublishedCourses } from '@/hooks/useCourses'
-import { FolderOpen, BookOpen } from 'lucide-react'
+import { FolderOpen, BookOpen, ChevronRight } from 'lucide-react'
 
 export function CategoriesPage() {
   const { data: categories = [], isLoading } = useActiveCategories()
   const { data: courses = [] } = usePublishedCourses()
 
-  function getCoursesByCategory(categoryName: string) {
-    return courses.filter((c) => c.category === categoryName)
+  function getCourseCount(categoryName: string) {
+    return courses.filter((c) => c.category === categoryName).length
   }
 
   if (isLoading) {
@@ -34,49 +34,30 @@ export function CategoriesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((cat) => {
-            const catCourses = getCoursesByCategory(cat.name)
+            const count = getCourseCount(cat.name)
             return (
-              <div key={cat.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+              <Link
+                key={cat.id}
+                to={`/learner/categories/${encodeURIComponent(cat.name)}`}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow block"
+              >
                 {cat.cover_url && (
                   <img src={cat.cover_url} alt={cat.name} className="w-full h-36 object-cover" />
                 )}
                 <div className="p-5">
-                  <h3 className="font-bold text-gray-900 text-base mb-1">{cat.name}</h3>
-                  {cat.description && (
-                    <p className="text-sm text-gray-500 mb-3 line-clamp-2">{cat.description}</p>
-                  )}
-                  <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-3">
-                    <BookOpen size={14} />
-                    <span>{catCourses.length} course{catCourses.length !== 1 ? 's' : ''}</span>
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-gray-900 text-base">{cat.name}</h3>
+                    <ChevronRight size={18} className="text-gray-400" />
                   </div>
-
-                  {catCourses.length > 0 && (
-                    <div className="space-y-2">
-                      {catCourses.map((course) => (
-                        <Link
-                          key={course.id}
-                          to={`/learner/courses/${course.id}`}
-                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          {course.cover_url ? (
-                            <img src={course.cover_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                          ) : (
-                            <div className="w-10 h-10 rounded-lg bg-brand-100 flex items-center justify-center shrink-0">
-                              <BookOpen size={16} className="text-brand-600" />
-                            </div>
-                          )}
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{course.title}</p>
-                            {course.instructor && (
-                              <p className="text-xs text-gray-400">by {course.instructor.full_name}</p>
-                            )}
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
+                  {cat.description && (
+                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{cat.description}</p>
                   )}
+                  <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
+                    <BookOpen size={14} />
+                    <span>{count} course{count !== 1 ? 's' : ''}</span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             )
           })}
         </div>

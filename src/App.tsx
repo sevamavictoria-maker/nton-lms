@@ -33,6 +33,7 @@ const LessonView = lazy(() => import('@/pages/learner/LessonView').then(m => ({ 
 const LearnerCertificates = lazy(() => import('@/pages/learner/CertificatesPage').then(m => ({ default: m.CertificatesPage })))
 const MyGradesPage = lazy(() => import('@/pages/learner/MyGradesPage').then(m => ({ default: m.MyGradesPage })))
 const LearnerCategories = lazy(() => import('@/pages/learner/CategoriesPage').then(m => ({ default: m.CategoriesPage })))
+const CategoryCourses = lazy(() => import('@/pages/learner/CategoryCoursesPage').then(m => ({ default: m.CategoryCoursesPage })))
 
 // Shared pages
 const ProfilePage = lazy(() => import('@/pages/shared/ProfilePage').then(m => ({ default: m.ProfilePage })))
@@ -111,6 +112,7 @@ function AppRoutes() {
           <Route path="/learner/courses/:courseId" element={<CourseView />} />
           <Route path="/learner/courses/:courseId/lessons/:lessonId" element={<LessonView />} />
           <Route path="/learner/categories" element={<LearnerCategories />} />
+          <Route path="/learner/categories/:categoryName" element={<CategoryCourses />} />
           <Route path="/learner/grades" element={<MyGradesPage />} />
           <Route path="/learner/certificates" element={<LearnerCertificates />} />
         </Route>
