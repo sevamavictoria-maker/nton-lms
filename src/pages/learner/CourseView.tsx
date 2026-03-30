@@ -88,6 +88,28 @@ export function CourseView() {
             </div>
           </div>
 
+          {/* Course Outline (visible before enrollment) */}
+          {lessons.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Course Outline</h3>
+              <div className="space-y-1.5">
+                {lessons.map((lesson, index) => (
+                  <div key={lesson.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 border border-gray-100">
+                    <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold shrink-0">
+                      {index + 1}
+                    </span>
+                    <span className="text-sm text-gray-700 flex-1">{lesson.title}</span>
+                    <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full ${
+                      lesson.type === 'quiz' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
+                    }`}>
+                      {lesson.type === 'quiz' ? 'Quiz' : 'Lesson'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
             <Lock className="mx-auto text-gray-400 mb-2" size={32} />
             <p className="text-sm font-medium text-gray-700 mb-1">Enrollment required</p>
@@ -228,6 +250,34 @@ export function CourseView() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Course Outline */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+        <h2 className="text-sm font-semibold text-gray-700 mb-3">Course Outline</h2>
+        <div className="flex flex-wrap gap-2">
+          {lessons.map((lesson, index) => {
+            const isComplete = completedLessonIds.has(lesson.id)
+            return (
+              <div key={lesson.id} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border ${
+                isComplete
+                  ? 'bg-green-50 border-green-200 text-green-700'
+                  : 'bg-gray-50 border-gray-200 text-gray-600'
+              }`}>
+                <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                  isComplete ? 'bg-green-500 text-white' : 'bg-gray-300 text-white'
+                }`}>{index + 1}</span>
+                {lesson.title}
+                {isComplete && <CheckCircle size={10} className="text-green-500" />}
+              </div>
+            )
+          })}
+        </div>
+        <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+          <span>{lessons.filter(l => l.type === 'slide').length} lessons</span>
+          <span>{lessons.filter(l => l.type === 'quiz').length} quizzes</span>
+          <span>{completedLessonIds.size}/{lessons.length} completed</span>
+        </div>
       </div>
 
       {/* Lessons List */}
