@@ -93,7 +93,10 @@ export function useEnroll() {
     mutationFn: async ({ userId, courseId }: { userId: string; courseId: string }) => {
       const { data, error } = await supabase
         .from('enrollments')
-        .insert({ user_id: userId, course_id: courseId, status: 'pending' })
+        .upsert(
+          { user_id: userId, course_id: courseId, status: 'pending', enrolled_at: new Date().toISOString() },
+          { onConflict: 'user_id,course_id' }
+        )
         .select()
         .single()
       if (error) throw error
@@ -116,7 +119,10 @@ export function useAssignCourse() {
     mutationFn: async (input: { user_id: string; course_id: string; deadline?: string; is_mandatory?: boolean; assigned_by?: string }) => {
       const { data, error } = await supabase
         .from('enrollments')
-        .insert({ ...input, status: 'approved' })
+        .upsert(
+          { ...input, status: 'approved', enrolled_at: new Date().toISOString() },
+          { onConflict: 'user_id,course_id' }
+        )
         .select()
         .single()
       if (error) throw error
