@@ -43,6 +43,12 @@ export function AppShell() {
         <main className="flex-1 p-4 lg:p-6">
           <Outlet />
         </main>
+        <footer className="border-t border-gray-200 bg-white px-4 py-3 text-center text-xs text-gray-400">
+          Need help? Contact us at{' '}
+          <a href="mailto:admin@blucruph.com" className="text-brand-600 hover:text-brand-700 font-medium">
+            admin@blucruph.com
+          </a>
+        </footer>
       </div>
     </div>
   )
