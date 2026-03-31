@@ -62,7 +62,7 @@ export function Sidebar({ role, onSignOut, onClose }: Props) {
   const items = navByRole[role]
 
   return (
-    <aside className="w-64 bg-brand-900 text-white flex flex-col min-h-screen">
+    <aside className="w-64 bg-brand-900 text-white flex flex-col h-screen sticky top-0 overflow-y-auto">
       <div className="p-4 border-b border-brand-800 flex items-center justify-between">
         <h1 className="text-xl font-bold tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
           Nto<span className="text-brand-300">N</span>
