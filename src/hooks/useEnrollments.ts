@@ -128,10 +128,14 @@ export function useAssignCourse() {
       if (error) throw error
       return data
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: ['enrollments'] })
       qc.invalidateQueries({ queryKey: ['course-enrollments'] })
+      qc.invalidateQueries({ queryKey: ['course-enrollments', variables.course_id] })
       qc.invalidateQueries({ queryKey: ['all-enrollments'] })
+      qc.invalidateQueries({ queryKey: ['my-enrollments'] })
+      qc.invalidateQueries({ queryKey: ['pending-enrollments'] })
+      qc.invalidateQueries({ queryKey: ['all-pending-enrollments'] })
     },
   })
 }
