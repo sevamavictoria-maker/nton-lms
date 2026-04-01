@@ -28,11 +28,17 @@ export function VideoUpload({ value, onChange, label, placeholder }: Props) {
       return
     }
 
+    const allowedExts = ['mp4', 'webm', 'mov', 'avi']
+    const ext = (file.name.split('.').pop() || '').toLowerCase()
+    if (!allowedExts.includes(ext)) {
+      setError('Allowed formats: MP4, WebM, MOV, AVI')
+      return
+    }
+
     setError('')
     setUploading(true)
 
     try {
-      const ext = file.name.split('.').pop()
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`
       const filePath = `videos/${fileName}`
 

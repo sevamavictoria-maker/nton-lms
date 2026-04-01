@@ -17,7 +17,8 @@ export function PdfUpload({ onImport }: Props) {
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (file.type !== 'application/pdf') {
+    const ext = (file.name.split('.').pop() || '').toLowerCase()
+    if (file.type !== 'application/pdf' || ext !== 'pdf') {
       setError('Please select a PDF file')
       return
     }

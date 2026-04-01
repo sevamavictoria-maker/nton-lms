@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Volume2, VolumeX, Pause, Play, SkipForward, Settings } from 'lucide-react'
 
-const ELEVENLABS_API_KEY = 'sk_7f916cc2780a02e0f667c1c0cefe74a209280d2465f4a4f5'
+const ELEVENLABS_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY || ''
 const ELEVENLABS_API_URL = 'https://api.elevenlabs.io/v1/text-to-speech'
 
 const ELEVENLABS_VOICES = [

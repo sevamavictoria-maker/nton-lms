@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import DOMPurify from 'dompurify'
 import { useParams, Link } from 'react-router-dom'
 import { useLesson, useUpdateLesson } from '@/hooks/useLessons'
 import { useQuestions, useCreateQuestion, useUpdateQuestion, useDeleteQuestion } from '@/hooks/useQuiz'
@@ -593,7 +594,7 @@ function SlidePreview({ slides }: { slides: Slide[] }) {
               )}
             </div>
           )}
-          <div className="prose prose-sm max-w-none text-gray-700" dangerouslySetInnerHTML={{ __html: slide.body }} />
+          <div className="prose prose-sm max-w-none text-gray-700" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(slide.body || '') }} />
         </div>
       </div>
       <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 flex items-center justify-between gap-2">

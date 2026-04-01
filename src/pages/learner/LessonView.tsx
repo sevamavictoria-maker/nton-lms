@@ -5,6 +5,7 @@ import { useLesson } from '@/hooks/useLessons'
 import { useQuestions, useSubmitQuiz } from '@/hooks/useQuiz'
 import { useMarkComplete } from '@/hooks/useProgress'
 import { ArrowLeft, ChevronLeft, ChevronRight, CheckCircle, XCircle, FileText, ChevronDown, Download, RotateCcw } from 'lucide-react'
+import DOMPurify from 'dompurify'
 import { TextToSpeech } from '@/components/TextToSpeech'
 import type { Slide, QuizQuestion } from '@/types/database'
 
@@ -182,7 +183,7 @@ export function LessonView() {
                     </div>
                   )}
                   <div className="prose prose-sm max-w-none text-brand-800 leading-relaxed text-base"
-                    dangerouslySetInnerHTML={{ __html: slides[currentSlide].body }} />
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(slides[currentSlide].body || '') }} />
 
                 </div>
               </div>
