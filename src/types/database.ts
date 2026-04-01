@@ -100,6 +100,28 @@ export interface Progress {
   attempt_count: number
 }
 
+export interface CustomAssessment {
+  id: string
+  course_id: string
+  title: string
+  description: string | null
+  max_score: number
+  created_by: string
+  created_at: string
+}
+
+export interface AssessmentGrade {
+  id: string
+  assessment_id: string
+  user_id: string
+  score: number
+  feedback: string | null
+  graded_by: string
+  graded_at: string
+  assessment?: CustomAssessment
+  user?: { id: string; full_name: string | null; email: string }
+}
+
 export interface LiveLesson {
   id: string
   course_id: string

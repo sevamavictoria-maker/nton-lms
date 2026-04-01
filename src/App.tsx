@@ -25,6 +25,7 @@ const CollectionsPage = lazy(() => import('@/pages/admin/CollectionsPage').then(
 const InstructorDashboard = lazy(() => import('@/pages/instructor/InstructorDashboard').then(m => ({ default: m.InstructorDashboard })))
 const CourseEditor = lazy(() => import('@/pages/instructor/CourseEditor').then(m => ({ default: m.CourseEditor })))
 const LessonEditor = lazy(() => import('@/pages/instructor/LessonEditor').then(m => ({ default: m.LessonEditor })))
+const StudentProgressPage = lazy(() => import('@/pages/instructor/StudentProgressPage').then(m => ({ default: m.StudentProgressPage })))
 
 // Learner pages
 const LearnerDashboard = lazy(() => import('@/pages/learner/LearnerDashboard').then(m => ({ default: m.LearnerDashboard })))
@@ -98,6 +99,7 @@ function AppRoutes() {
           <Route path="/instructor/create" element={<CourseEditor />} />
           <Route path="/instructor/courses/:courseId" element={<CourseEditor />} />
           <Route path="/instructor/courses/:courseId/lessons/:lessonId" element={<LessonEditor />} />
+          <Route path="/instructor/progress" element={<StudentProgressPage />} />
         </Route>
 
         {/* Learner routes */}

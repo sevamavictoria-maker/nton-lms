@@ -41,6 +41,7 @@ const instructorNav: NavItem[] = [
   { to: '/instructor', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
   { to: '/instructor/courses', label: 'My Courses', icon: <BookOpen size={20} /> },
   { to: '/instructor/create', label: 'Create Course', icon: <PlusCircle size={20} /> },
+  { to: '/instructor/progress', label: 'Student Progress', icon: <GraduationCap size={20} /> },
 ]
 
 const learnerNav: NavItem[] = [
